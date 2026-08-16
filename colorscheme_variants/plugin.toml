@@ -1,6 +1,6 @@
 id           = "uozzoku/colorscheme_variants" # "<author>/<plugin>" - globally unique
 name         = "Colorscheme Variants"
-version      = "1.0.0"
+version      = "1.0"
 plugin_api   = 3          # mandatory: oldest plugin API level required
 author       = "UozzokU"
 license      = "MIT"     # optional; defaults to MIT
@@ -11,14 +11,14 @@ description  = "Colorscheme Variants"
 [[panel]]
 id = "panel"
 entry = "panel.luau"
-width = 920
-height = 780
+width = 500
+height = 415
 placement = "attached"
 position = "auto"
 
 [[widget]]
-id = "colorscheme_variants"
-entry = "colorscheme_variants.luau"
+id = "colorscheme_variants_widget"
+entry = "colorscheme_variants_widget.luau"
 
   [[widget.setting]]
   key = "glyph"
@@ -26,8 +26,9 @@ entry = "colorscheme_variants.luau"
   label_key = "settings.glyph.label"
   default = "palette"
 
-
-# Control-center quick-toggle tile. Add it from Settings → Control Center shortcuts.
-[[shortcut]]
-id = "colorscheme_variants"
-entry = "shortcut.luau"
+  [[widget.setting]]
+  key = "label"
+  type = "string"
+  label_key = "settings.label.label"
+  description_key = "settings.label.description"
+  default = ""

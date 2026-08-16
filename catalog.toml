@@ -9,17 +9,14 @@
 # On every row, updated_at dates the commit that first shipped that row's version.
 
 [[plugin]]
-id = "noctalia/example"
-name = "Example"
-version = "1.3.1"
-updated_at = 1784946285
-added_at = 1781039692
-author = "noctalia"
+id = "uozzoku/colorscheme_variants"
+name = "Colorscheme Variants"
+version = "1.0"
+author = "UozzokU"
 license = "MIT"
-icon = "puzzle"
-description = "A reference plugin demonstrating every supported entry type and common runtime APIs."
+icon = "palette"
+description = "Colorscheme Variants"
 plugin_api = 9
-tags = ["demo"]
 
 
 

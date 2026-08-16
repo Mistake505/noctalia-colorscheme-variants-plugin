@@ -1,54 +1,23 @@
-# Example
+# Colorscheme Variants
 
-Example is a minimal reference plugin that demonstrates the common Noctalia
-plugin entry types: a bar widget, a headless service, and a control-center
-shortcut.
+Colorscheme variants changes your theme based on a flavor and 4 accents.
 
 ## Plugin
 
 | Field | Value |
 | --- | --- |
 | ID | `uozzoku/example` |
-| Entries | Bar widgets: `colorscheme_variants`; shortcut: `colorscheme_variants`; panels: `panel` |
+| Entries | Bar widgets: `colorscheme_variants_widget`; shortcut: `colorscheme_variants_shortcut`; panels: `panel` |
 | Launcher Prefix | `/ex` |
 
 ## Usage
 
-Add the `colorscheme_variants` widget from the Add-widget picker. The widget opens the colorscheme variants panel.
-
-Add the `colorscheme_variants` shortcut from Settings -> Control Center shortcuts. It also opens the colorscheme variants panel.
+Add the `colorscheme_variants` widget from the Add-widget picker. The widget opens the colorscheme variants panel, where you choose you colorscheme.
 
 ## Settings
 
 | Setting | Type | Default | Description |
 | --- | --- | --- | --- |
-| `label` | `string` | `Hello` | Text shown in the bar widget. |
-| `glyph` | `glyph` | `puzzle` | Glyph shown before the label. |
-| `show_glyph` | `bool` | `true` | Controls whether the glyph is visible. |
+| `label` | `string` | `` | Text shown in the bar widget. |
+| `glyph` | `glyph` | `palette` | Glyph shown before the label. |
 
-## IPC
-
-The `hello` widget exposes two IPC events:
-
-```sh
-noctalia msg plugin noctalia/example:hello focused set "Hi there"
-noctalia msg plugin noctalia/example:hello focused fetch "https://example.com"
-```
-
-`set` updates the widget label at runtime. `fetch` performs an asynchronous HTTP
-request and reports the response status in a notification.
-
-You can open the example panel with the following IPC call:
-
-```sh
-noctalia msg panel-toggle noctalia/example:panel
-noctalia msg panel-toggle noctalia/example:dnd
-```
-
-The panel includes a **Color picker** section. Click **Choose color** to open
-Noctalia's native dialog; applying a color updates the swatch and displays the
-hex value returned to the plugin callback, while cancelling displays the
-cancellation result.
-
-The `dnd` panel is the drag-and-drop reference (sortable rows, cross-column
-moves, and rejected-type targets).
