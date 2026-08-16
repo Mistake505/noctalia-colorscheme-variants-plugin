@@ -10,12 +10,10 @@
 -- State is shared via noctalia.state, so the plugin's other entries (widget,
 -- service) could react to the toggle.
 
-local on = noctalia.state.get("toggle") == true
-
 local function render()
-  shortcut.setLabel(if on then "Example On" else "Example Off")
-  shortcut.setIcon("puzzle")
-  shortcut.setActive(on)
+  shortcut.setLabel("Theme")
+  shortcut.setIcon("palette")
+  --shortcut.setActive(true)
   shortcut.setEnabled(true)
 end
 
@@ -23,7 +21,6 @@ end
 render()
 
 function onClick()
-  on = not on
-  noctalia.state.set("toggle", on)
+  noctalia.togglePanel("uozzoku/colorscheme_variants:panel")
   render()
 end

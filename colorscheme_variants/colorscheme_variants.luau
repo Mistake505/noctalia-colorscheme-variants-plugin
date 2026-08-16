@@ -1,5 +1,5 @@
 --!nonstrict
--- Bar widget that opens the notes panel.
+-- Bar widget that opens the Wallhaven browser panel.
 
 local glyph = noctalia.getConfig("glyph")
 
@@ -13,7 +13,7 @@ function update()
 end
 
 function onClick()
-  noctalia.togglePanel("noctalia/notes:panel")
+  noctalia.togglePanel("uozzoku/colorscheme_variants:panel")
 end
 
 render()

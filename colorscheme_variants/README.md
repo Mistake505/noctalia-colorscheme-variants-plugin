@@ -8,25 +8,15 @@ shortcut.
 
 | Field | Value |
 | --- | --- |
-| ID | `noctalia/example` |
-| Entries | Bar widgets: `hello`, `declarative`; service: `ticker`; shortcut: `toggle`; launcher: `finder`; panels: `panel`, `dnd` |
+| ID | `uozzoku/example` |
+| Entries | Bar widgets: `colorscheme_variants`; shortcut: `colorscheme_variants`; panels: `panel` |
 | Launcher Prefix | `/ex` |
 
 ## Usage
 
-Add the `hello` widget from the Add-widget picker. The widget displays a
-configurable label and glyph, counts clicks, reads `data.txt`, and watches the
-shared `tick` state published by the `ticker` service.
+Add the `colorscheme_variants` widget from the Add-widget picker. The widget opens the colorscheme variants panel.
 
-Add the `declarative` widget to see the same service tick rendered as a
-`ui.*` tree via `barWidget.render()` — a glyph, the live counter in a filled
-rounded badge (impossible with the imperative API), and an inline `ui.button`
-whose click is handled separately from the widget-level `onClick`. Simple
-widgets can keep using `setText`/`setGlyph`; `render()` is the declarative
-alternative for composite content.
-
-Add the `toggle` shortcut from Settings -> Control Center shortcuts. It toggles
-shared plugin state and shows how shortcut entries can render an active state.
+Add the `colorscheme_variants` shortcut from Settings -> Control Center shortcuts. It also opens the colorscheme variants panel.
 
 ## Settings
 
