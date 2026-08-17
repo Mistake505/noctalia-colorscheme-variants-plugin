@@ -712,7 +712,7 @@ local function getTheme()
     return
   end
 
-  noctalia.notify("Save json:", rawFile)
+  -- noctalia.notify("Save json:", rawFile)
   local saveTable, err = noctalia.json.decode(rawFile)
 
   if not saveTable then
@@ -857,7 +857,7 @@ function onApplyClicked()
   local themeDir = "~/.config/noctalia/palettes"
   local success, err = noctalia.mkdirAll(themeDir)
   if not success then
-    noctalia.notify("Failed to create theme dir", err)
+    noctalia.notifyError("Failed to create theme dir", err)
   end
 
   local path = themeDir.."/custom.json"
@@ -882,7 +882,7 @@ function onApplyClicked()
     return
   end
 
-  noctalia.notify("Theme json:", themeJson)
+  -- noctalia.notify("Theme json:", themeJson)
   noctalia.writeFile(path, themeJson)
     
   noctalia.runAsync("noctalia msg color-scheme-set custom custom")

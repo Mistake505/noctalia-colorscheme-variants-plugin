@@ -5,7 +5,7 @@ local glyph = noctalia.getConfig("glyph")
 
 local function render()
   barWidget.setGlyph(glyph)
-  barWidget.setTooltip(noctalia.tr("title"))
+  -- barWidget.setTooltip(noctalia.tr("title"))
 end
 
 function update()
