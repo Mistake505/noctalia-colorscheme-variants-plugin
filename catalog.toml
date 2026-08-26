@@ -11,7 +11,7 @@
 [[plugin]]
 id = "uozzoku/colorscheme_variants"
 name = "Colorscheme Variants"
-version = "1.0"
+version = "1.0.0"
 author = "UozzokU"
 license = "MIT"
 icon = "palette"
