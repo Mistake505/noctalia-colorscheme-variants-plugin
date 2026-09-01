@@ -1,7 +1,7 @@
 id           = "uozzoku/colorscheme_variants" # "<author>/<plugin>" - globally unique
 name         = "Colorscheme Variants"
 version      = "1.0.0"
-plugin_api   = 3          # mandatory: oldest plugin API level required
+plugin_api   = 22          # mandatory: oldest plugin API level required
 author       = "UozzokU"
 license      = "MIT"     # optional; defaults to MIT
 deprecated   = false     # optional; defaults to false

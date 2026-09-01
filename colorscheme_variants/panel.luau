@@ -27,871 +27,193 @@
 --     text buffer afterward, so re-rendering never clobbers what the user typed.
 --     Observe edits via onChange (live) / onSubmit (Enter).
 
+local colorSchemes = require("./modules/colorSchemes")
 
-type colorScheme = {
-   
-    [string]: {
-      Base: {
-        ["mOnPrimary"]        : string,
-        ["mOnSecondary"]      : string,
-        ["mOnTertiary"]       : string,
-        ["mOnError"]          : string,
-        ["mSurface"]          : string,
-        ["mOnSurface"]        : string,
-        ["mSurfaceVariant"]   : string,
-        ["mOnSurfaceVariant"] : string,
-        ["mOutline"]          : string,
-        ["mShadow"]           : string,
-        ["mHover"]            : string,
-        ["mOnHover"]          : string,
-      },
-      Accents: {[string]: string},
-      Terminal: {
-        ["normal"]: {
-          ["black"]   : string,
-          ["red"]     : string,
-          ["green"]   : string,
-          ["yellow"]  : string,
-          ["blue"]    : string,
-          ["magenta"] : string,
-          ["cyan"]    : string,
-          ["white"]   : string
-        },
-        ["bright"]: {
-          ["black"]   : string,
-          ["red"]     : string,
-          ["green"]   : string,
-          ["yellow"]  : string,
-          ["blue"]    : string,
-          ["magenta"] : string,
-          ["cyan"]    : string,
-          ["white"]   : string
-        },
-        ["foreground"]  : string,
-        ["background"]  : string,
-        ["selectionFg"] : string,
-        ["selectionBg"] : string,
-        ["cursorText"]  : string,
-      }
-    },
-    ["Light"]: {
-      Base: {
-        ["mOnPrimary"]        : string,
-        ["mOnSecondary"]      : string,
-        ["mOnTertiary"]       : string,
-        ["mOnError"]          : string,
-        ["mSurface"]          : string,
-        ["mOnSurface"]        : string,
-        ["mSurfaceVariant"]   : string,
-        ["mOnSurfaceVariant"] : string,
-        ["mOutline"]          : string,
-        ["mShadow"]           : string,
-        ["mHover"]            : string,
-        ["mOnHover"]          : string,
-      },
-      Accents: {[string]: string},
-      Terminal: {
-        ["normal"]: {
-          ["black"]   : string,
-          ["red"]     : string,
-          ["green"]   : string,
-          ["yellow"]  : string,
-          ["blue"]    : string,
-          ["magenta"] : string,
-          ["cyan"]    : string,
-          ["white"]   : string
-        },
-        ["bright"]: {
-          ["black"]   : string,
-          ["red"]     : string,
-          ["green"]   : string,
-          ["yellow"]  : string,
-          ["blue"]    : string,
-          ["magenta"] : string,
-          ["cyan"]    : string,
-          ["white"]   : string
-        },
-        ["foreground"]  : string,
-        ["background"]  : string,
-        ["selectionFg"] : string,
-        ["selectionBg"] : string,
-        ["cursorText"]  : string,
-      }
-    }
-
-}
-
-local colorSchemes: {[string]: colorScheme} = {
-  ["Catppuccin"] = {
-    ["Light"] = {
-      Base = {
-        ["mOnPrimary"]        = "#eff1f5",
-        ["mOnSecondary"]      = "#eff1f5",
-        ["mOnTertiary"]       = "#eff1f5",
-        ["mOnError"]          = "#eff1f5",
-        ["mSurface"]          = "#eff1f5",
-        ["mOnSurface"]        = "#4c4f69",
-        ["mSurfaceVariant"]   = "#ccd0da",
-        ["mOnSurfaceVariant"] = "#6c6f85",
-        ["mOutline"]          = "#9ca0b0",
-        ["mShadow"]           = "#dce0e8",
-        ["mHover"]            = "#bcc0cc",
-        ["mOnHover"]          = "#4c4f69",
-      },
-      Accents = {
-        ["Rosewater"] = "#dc8a78",
-        ["Flamingo"]  = "#dd7878",
-        ["Pink"]      = "#ea76cb",
-        ["Mauve"]     = "#8839ef",
-        ["Red"]       = "#d20f39",
-        ["Maroon"]    = "#e64553",
-        ["Peach"]     = "#fe640b",
-        ["Yellow"]    = "#df8e1d",
-        ["Green"]     = "#40a02b",
-        ["Teal"]      = "#179299",
-        ["Sky"]       = "#04a5e5",
-        ["Sapphire"]  = "#209fb5",
-        ["Blue"]      = "#1e66f5",
-        ["Lavender"]  = "#7287fd",
-      },
-      Terminal = {
-        ["normal"] = {
-          ["black"] = "#5c5f77",
-          ["red"] = "#d20f39",
-          ["green"] = "#40a02b",
-          ["yellow"] = "#df8e1d",
-          ["blue"] = "#1e66f5",
-          ["magenta"] = "#ea76cb",
-          ["cyan"] = "#179299",
-          ["white"] = "#acb0be",
-        },
-        ["bright"] = {
-          ["black"] = "#6c6f85",
-          ["red"] = "#d20f39",
-          ["green"] = "#40a02b",
-          ["yellow"] = "#df8e1d",
-          ["blue"] = "#1e66f5",
-          ["magenta"] = "#ea76cb",
-          ["cyan"] = "#179299",
-          ["white"] = "#bcc0cc",
-        },
-        ["foreground"] = "#4c4f69",
-        ["background"] = "#eff1f5",
-        ["selectionFg"] = "#4c4f69",
-        ["selectionBg"] = "#acb0be",
-        ["cursorText"] = "#eff1f5",
-      },
-    },
-    ["Frappe"] = {
-      Base = {
-        ["mOnPrimary"]        = "#303446",
-        ["mOnSecondary"]      = "#303446",
-        ["mOnTertiary"]       = "#303446",
-        ["mOnError"]          = "#303446",
-        ["mSurface"]          = "#303446",
-        ["mOnSurface"]        = "#c6d0f5",
-        ["mSurfaceVariant"]   = "#414559",
-        ["mOnSurfaceVariant"] = "#a5adce",
-        ["mOutline"]          = "#737994",
-        ["mShadow"]           = "#232634",
-        ["mHover"]            = "#51576d",
-        ["mOnHover"]          = "#c6d0f5",
-      },
-      Accents = {
-        ["Rosewater"] = "#f2d5cf", 
-        ["Flamingo"] = "#eebebe",
-        ["Pink"]     = "#f4b8e4",
-        ["Mauve"]    = "#ca9ee6",
-        ["Red"]      = "#e78284",
-        ["Maroon"]   = "#ea999c",
-        ["Peach"]    = "#ef9f76",
-        ["Yellow"]   = "#e5c890",
-        ["Green"]    = "#a6d189",
-        ["Teal"]     = "#81c8be",
-        ["Sky"]      = "#99d1db",
-        ["Sapphire"] = "#85c1dc",
-        ["Blue"]     = "#8caaee",
-        ["Lavender"] = "#babbf1",
-      },
-      Terminal = {
-        ["normal"] = {
-          ["black"] = "#51576d",
-          ["red"] = "#e78284",
-          ["green"] = "#a6d189",
-          ["yellow"] = "#e5c890",
-          ["blue"] = "#8caaee",
-          ["magenta"] = "#f4b8e4",
-          ["cyan"] = "#81c8be",
-          ["white"] = "#b5bfe2",
-        },
-        ["bright"] = {
-          ["black"] = "#626880",
-          ["red"] = "#e78284",
-          ["green"] = "#a6d189",
-          ["yellow"] = "#e5c890",
-          ["blue"] = "#8caaee",
-          ["magenta"] = "#f4b8e4",
-          ["cyan"] = "#81c8be",
-          ["white"] = "#a5adce",
-        },
-        ["foreground"] = "#c6d0f5",
-        ["background"] = "#303446",
-        ["selectionFg"] = "#c6d0f5",
-        ["selectionBg"] = "#626880",
-        ["cursorText"] = "#303446",
-      },
-    },
-    ["Macchiato"] = {
-      Base = {
-        ["mOnPrimary"]        = "#24273a",
-        ["mOnSecondary"]      = "#24273a",
-        ["mOnTertiary"]       = "#24273a",
-        ["mOnError"]          = "#24273a",
-        ["mSurface"]          = "#24273a",
-        ["mOnSurface"]        = "#cad3f5",
-        ["mSurfaceVariant"]   = "#363a4f",
-        ["mOnSurfaceVariant"] = "#a5adcb",
-        ["mOutline"]          = "#6e738d",
-        ["mShadow"]           = "#181926",
-        ["mHover"]            = "#494d64",
-        ["mOnHover"]          = "#cad3f5",
-      },
-      Accents = {
-        ["Rosewater"] = "#f4dbd6",
-        ["Flamingo"]  = "#f0c6c6",
-        ["Pink"]      = "#f5bde6",
-        ["Mauve"]     = "#c6a0f6",
-        ["Red"]       = "#ed8796",
-        ["Maroon"]    = "#ee99a0",
-        ["Peach"]     = "#f5a97f",
-        ["Yellow"]    = "#eed49f",
-        ["Green"]     = "#a6da95",
-        ["Teal"]      = "#8bd5ca",
-        ["Sky"]       = "#91d7e3",
-        ["Sapphire"]  = "#7dc4e4",
-        ["Blue"]      = "#8aadf4",
-        ["Lavender"]  = "#b7bdf8",
-      },
-      Terminal = {
-        ["normal"] = {
-          ["black"] = "#494d64",
-          ["red"] = "#ed8796",
-          ["green"] = "#a6da95",
-          ["yellow"] = "#eed49f",
-          ["blue"] = "#8aadf4",
-          ["magenta"] = "#f5bde6",
-          ["cyan"] = "#8bd5ca",
-          ["white"] = "#b8c0e0"
-        },
-        ["bright"] = {
-          ["black"] = "#5b6078",
-          ["red"] = "#ed8796",
-          ["green"] = "#a6da95",
-          ["yellow"] = "#eed49f",
-          ["blue"] = "#8aadf4",
-          ["magenta"] = "#f5bde6",
-          ["cyan"] = "#8bd5ca",
-          ["white"] = "#a5adcb"
-        },
-        ["foreground"] = "#cad3f5",
-        ["background"] = "#24273a",
-        ["selectionFg"] = "#cad3f5",
-        ["selectionBg"] = "#5b6078",
-        ["cursorText"] = "#24273a",
-      } 
-    },
-    ["Mocha"] = {
-      Base = {
-        ["mOnPrimary"]                = "#1e1e2e",
-        ["mOnSecondary"]              = "#1e1e2e",
-        ["mOnTertiary"]               = "#1e1e2e",
-        ["mOnError"]                  = "#1e1e2e",
-        ["mSurface"]                  = "#1e1e2e",
-        ["mOnSurface"]                  = "#cdd6f4",
-        ["mSurfaceVariant"]                 = "#313244",
-        ["mOnSurfaceVariant"]                 = "#a6adc8",
-        ["mOutline"]                  = "#6c7086",
-        ["mShadow"]                 = "#11111b",
-        ["mHover"]                  = "#45475a",
-        ["mOnHover"]                  = "#cdd6f4",
-      },
-      Accents = {
-        ["Rosewater"] = "#f5e0dc",
-        ["Flamingo"]  = "#f2cdcd",
-        ["Pink"]      = "#f5c2e7",
-        ["Mauve"]     = "#cba6f7",
-        ["Red"]       = "#f38ba8",
-        ["Maroon"]    = "#eba0ac",
-        ["Peach"]     = "#fab387",
-        ["Yellow"]    = "#f9e2af",
-        ["Green"]     = "#a6e3a1",
-        ["Teal"]      = "#94e2d5",
-        ["Sky"]       = "#89dceb",
-        ["Sapphire"]  = "#74c7ec",
-        ["Blue"]      = "#89b4fa",
-        ["Lavender"]  = "#b4befe",
-      },
-      Terminal = {
-        ["normal"] = {
-          ["black"] = "#45475a",
-          ["red"] = "#f38ba8",
-          ["green"] = "#a6e3a1",
-          ["yellow"] = "#f9e2af",
-          ["blue"] = "#89b4fa",
-          ["magenta"] = "#f5c2e7",
-          ["cyan"] = "#94e2d5",
-          ["white"] = "#bac2de",
-        },
-        ["bright"] = {
-          ["black"] = "#585b70",
-          ["red"] = "#f38ba8",
-          ["green"] = "#a6e3a1",
-          ["yellow"] = "#f9e2af",
-          ["blue"] = "#89b4fa",
-          ["magenta"] = "#f5c2e7",
-          ["cyan"] = "#94e2d5",
-          ["white"] = "#a6adc8",
-        },
-        ["foreground"] = "#cdd6f4",
-        ["background"] = "#1e1e2e",
-        ["selectionFg"] = "#cdd6f4",
-        ["selectionBg"] = "#585b70",
-        ["cursorText"] = "#1e1e2e",
-      },
-    },
-  },
-  ["Rose Pine"] = {
-    ["Normal"] = {
-      Base = {
-        ["mOnPrimary"]        = "#191724",
-        ["mOnSecondary"]      = "#191724",
-        ["mOnTertiary"]       = "#191724",
-        ["mOnError"]          = "#191724",
-        ["mSurface"]          = "#191724",
-        ["mOnSurface"]        = "#e0def4",
-        ["mSurfaceVariant"]   = "#26233a",
-        ["mOnSurfaceVariant"] = "#908caa",
-        ["mOutline"]          = "#403d52",
-        ["mShadow"]           = "#191724",
-        ["mHover"]            = "#524f67",
-        ["mOnHover"]          = "#191724",
-      },
-      Accents = {
-        ["Love"] = "#eb6f92",
-        ["Gold"] = "#f6c177",
-        ["Rose"] = "#ebbcba",
-        ["Pine"] = "#31748f",
-        ["Foam"] = "#9ccfd8",
-        ["Iris"] = "#c4a7e7",
-      },
-      Terminal = {
-        ["foreground"] = "#e0def4",
-        ["background"] = "#191724",
-        ["normal"] = {
-          ["black"] = "#26233a",
-          ["red"] = "#eb6f92",
-          ["green"] = "#31748f",
-          ["yellow"] = "#f6c177",
-          ["blue"] = "#9ccfd8",
-          ["magenta"] = "#c4a7e7",
-          ["cyan"] = "#ebbcba",
-          ["white"] = "#e0def4"
-        },
-        ["bright"] = {
-          ["black"] = "#6e6a86",
-          ["red"] = "#eb6f92",
-          ["green"] = "#3e8fb0",
-          ["yellow"] = "#f6c177",
-          ["blue"] = "#9ccfd8",
-          ["magenta"] = "#c4a7e7",
-          ["cyan"] = "#ea9a97",
-          ["white"] = "#e0def4"
-        },
-        ["cursorText"] = "#232136",
-        ["selectionFg"] = "#e0def4",
-        ["selectionBg"] = "#6e6a86"
-      },
-    },
-    ["Moon"] = {
-      Base = {
-        ["mOnPrimary"]        = "#232136",
-        ["mOnSecondary"]      = "#232136",
-        ["mOnTertiary"]       = "#232136",
-        ["mOnError"]          = "#232136",
-        ["mSurface"]          = "#232136",
-        ["mOnSurface"]        = "#e0def4",
-        ["mSurfaceVariant"]   = "#393552",
-        ["mOnSurfaceVariant"] = "#908caa",
-        ["mOutline"]          = "#44415a",
-        ["mShadow"]           = "#232136",
-        ["mHover"]            = "#56526e",
-        ["mOnHover"]          = "#e0def4",
-      },
-      Accents = {
-        ["Love"] = "#eb6f92",
-        ["Gold"] = "#f6c177",
-        ["Rose"] = "#ea9a97",
-        ["Pine"] = "#3e8fb0",
-        ["Foam"] = "#9ccfd8",
-        ["Iris"] = "#c4a7e7",
-      },
-      Terminal = {
-        ["foreground"] = "#e0def4",
-        ["background"] = "#232136",
-        ["normal"] = {
-          ["black"] = "#393552",
-          ["red"] = "#eb6f92",
-          ["green"] = "#3e8fb0",
-          ["yellow"] = "#f6c177",
-          ["blue"] = "#9ccfd8",
-          ["magenta"] = "#c4a7e7",
-          ["cyan"] = "#ea9a97",
-          ["white"] = "#e0def4"
-        },
-        ["bright"] = {
-          ["black"] = "#6e6a86",
-          ["red"] = "#eb6f92",
-          ["green"] = "#3e8fb0",
-          ["yellow"] = "#f6c177",
-          ["blue"] = "#9ccfd8",
-          ["magenta"] = "#c4a7e7",
-          ["cyan"] = "#ea9a97",
-          ["white"] = "#e0def4"
-        },
-        ["cursorText"] = "#232136",
-        ["selectionFg"] = "#e0def4",
-        ["selectionBg"] = "#6e6a86"
-      },
-    },
-    ["Light"] = {
-      Base = {
-        ["mOnPrimary"]        = "#faf4ed",
-        ["mOnSecondary"]      = "#faf4ed",
-        ["mOnTertiary"]       = "#faf4ed",
-        ["mOnError"]          = "#faf4ed",
-        ["mSurface"]          = "#fffaf3",
-        ["mOnSurface"]        = "#575279",
-        ["mSurfaceVariant"]   = "#f2e9e1",
-        ["mOnSurfaceVariant"] = "#797593",
-        ["mOutline"]          = "#dfdad9",
-        ["mShadow"]           = "#faf4ed",
-        ["mHover"]            = "#cecacd",
-        ["mOnHover"]          = "#575279",
-      },
-      Accents = {
-        ["Love"] = "#b4637a",
-        ["Gold"] = "#ea9d34",
-        ["Rose"] = "#d7827e",
-        ["Pine"] = "#286983",
-        ["Foam"] = "#56949f",
-        ["Iris"] = "#907aa9",
-      },
-      Terminal = {
-        ["foreground"] = "#575279",
-        ["background"] = "#faf4ed",
-        ["normal"] = {
-          ["black"] = "#f2e9e1",
-          ["red"] = "#b4637a",
-          ["green"] = "#286983",
-          ["yellow"] = "#ea9d34",
-          ["blue"] = "#56949f",
-          ["magenta"] = "#907aa9",
-          ["cyan"] = "#d7827e",
-          ["white"] = "#575279"
-        },
-        ["bright"] = {
-          ["black"] = "#9893a5",
-          ["red"] = "#b4637a",
-          ["green"] = "#286983",
-          ["yellow"] = "#ea9d34",
-          ["blue"] = "#56949f",
-          ["magenta"] = "#907aa9",
-          ["cyan"] = "#d7827e",
-          ["white"] = "#575279"
-        },
-        ["cursorText"] = "#faf4ed",
-        ["selectionFg"] = "#575279",
-        ["selectionBg"] = "#9893a5"
-      },
-    },
-  },
-}
-
-
-
-local jsonTemplate = {
-  ["dark"] = {
-    ["mPrimary"] = "",
-    ["mOnPrimary"] = "",
-    ["mSecondary"] = "",
-    ["mOnSecondary"] = "",
-    ["mTertiary"] = "",
-    ["mOnTertiary"] = "",
-    ["mError"] = "",
-    ["mOnError"] = "",
-    ["mSurface"] = "",
-    ["mOnSurface"] = "",
-    ["mSurfaceVariant"] = "",
-    ["mOnSurfaceVariant"] = "",
-    ["mOutline"] = "",
-    ["mShadow"] = "",
-    ["mHover"] = "",
-    ["mOnHover"] = "",
-    ["terminal"] = {
-      ["foreground"] = "",
-      ["background"] = "",
-      ["normal"] = {
-        ["black"] = "",
-        ["red"] = "",
-        ["green"] = "",
-        ["yellow"] = "",
-        ["blue"] = "",
-        ["magenta"] = "",
-        ["cyan"] = "",
-        ["white"] = ""
-      },
-      ["bright"] = {
-        ["black"] = "",
-        ["red"] = "",
-        ["green"] = "",
-        ["yellow"] = "",
-        ["blue"] = "",
-        ["magenta"] = "",
-        ["cyan"] = "",
-        ["white"] = ""
-      },
-      ["cursor"] = "",
-      ["cursorText"] = "",
-      ["selectionFg"] = "",
-      ["selectionBg"] = ""
-    }
-  },
-  ["light"] = {
-    ["mPrimary"] = "",
-    ["mOnPrimary"] = "",
-    ["mSecondary"] = "",
-    ["mOnSecondary"] = "",
-    ["mTertiary"] = "",
-    ["mOnTertiary"] = "",
-    ["mError"] = "",
-    ["mOnError"] = "",
-    ["mSurface"] = "",
-    ["mOnSurface"] = "",
-    ["mSurfaceVariant"] = "",
-    ["mOnSurfaceVariant"] = "",
-    ["mOutline"] = "",
-    ["mShadow"] = "",
-    ["mHover"] = "",
-    ["mOnHover"] = "",
-    ["terminal"] = {
-      ["foreground"] = "",
-      ["background"] = "",
-      ["normal"] = {
-        ["black"] = "",
-        ["red"] = "",
-        ["green"] = "",
-        ["yellow"] = "",
-        ["blue"] = "",
-        ["magenta"] = "",
-        ["cyan"] = "",
-        ["white"] = ""
-      },
-      ["bright"] = {
-        ["black"] = "",
-        ["red"] = "",
-        ["green"] = "",
-        ["yellow"] = "",
-        ["blue"] = "",
-        ["magenta"] = "",
-        ["cyan"] = "",
-        ["white"] = ""
-      },
-      ["cursor"] = "",
-      ["cursorText"] = "",
-      ["selectionFg"] = "",
-      ["selectionBg"] = ""
-    }
-  }
-}
-
+local Theme = require("./modules/themeFunctions")
 
 -- -- A labelled section: a heading above a control. ui.column stretches children to
 -- -- the panel width by default, so the control fills the row.
 local function section(title, control)
-  return ui.column({ gap = 8 }, {
-    ui.label({ text = title, fontWeight = "medium", color = "on_surface_variant" }),
-    control,
-  })
-end
-
-local selection = {
-  theme = {name = "", index = 0},
-  themeBase = {name = "", index = 0},
-  accents = {
-    ["Primary"] = {name = "", index = 0},
-    ["Secondary"] = {name = "", index = 0},
-    ["Tertiary"] = {name = "", index = 0},
-    ["Error"] = {name = "", index = 0},
-  }
-}
-
-local themeArray = {
-  themeNames = {},
-  themeBases = {},
-  accents = {},
-}
-
-local function makeThemeFile()
-  local themeFile = jsonTemplate
-
-  local baseColors = colorSchemes[selection.theme.name][selection.themeBase.name].Base
-  local lightBaseColors = colorSchemes[selection.theme.name].Light.Base
-
-  local accentColorsList = colorSchemes[selection.theme.name][selection.themeBase.name].Accents
-  local lightAccentsColorsList = colorSchemes[selection.theme.name].Light.Accents
-
-  local termColors = colorSchemes[selection.theme.name][selection.themeBase.name].Terminal
-  local lightTermColors = colorSchemes[selection.theme.name].Light.Terminal
-
-  for k, v in baseColors do
-    themeFile.dark[k] = v
-  end
-  for k, v in lightBaseColors do
-    themeFile.light[k] = v
-  end
-
-  for k, v in termColors do
-    themeFile.dark.terminal[k] = v
-  end
-
-  for k, v in lightTermColors do
-    themeFile.light.terminal[k] = v
-  end
-
-  for k, v in selection.accents do
-    local color = accentColorsList[selection.accents[k].name]
-    themeFile.dark[`m{k}`] = color
-  end
-
-  for k, v in selection.accents do
-    local color = lightAccentsColorsList[selection.accents[k].name]
-    themeFile.light[`m{k}`] = color
-  end
-
-  themeFile.dark.terminal.cursor = themeFile.dark.mPrimary
-  themeFile.light.terminal.cursor = themeFile.light.mPrimary
-
-  return themeFile
+	return ui.column({ gap = 8 }, {
+		ui.label({ text = title, fontWeight = "medium", color = "on_surface_variant" }),
+		control,
+	})
 end
 
 for colorSchemeName, colorScheme in colorSchemes do
-  table.insert(themeArray.themeNames, colorSchemeName)
+	table.insert(Theme.Array.ThemeNames, colorSchemeName)
 end
 
 local function accentPicker(accentType: string, onChangeFunc: string)
-  local accentColorName =  selection.accents[accentType].name
-  local accentIndex = selection.accents[accentType].index
+	local accentColorName = Theme.Selection.Accents[accentType].Name
+	local accentIndex = Theme.Selection.Accents[accentType].Index
 
-  local accentColorHex = colorSchemes[selection.theme.name][selection.themeBase.name].Accents[accentColorName]
+	local accentColorHex =
+		colorSchemes[Theme.Selection.Theme.Name][Theme.Selection.ThemeBase.Name].Accents[accentColorName]
 
-  return ui.row({gap = 12, align = "center"}, {
-    ui.label({ text = `{accentType}:`, color = "on_surface", flexGrow = 1 }),
-    ui.select({options = themeArray.accents, index = accentIndex, onChange = onChangeFunc}),
-    ui.box({ width = 32, height = 32, radius = 8, fill = accentColorHex, border = "outline", borderWidth = 1 }),
-  })
+	return ui.row({ gap = 12, align = "center" }, {
+		ui.label({ text = `{accentType}:`, color = "on_surface", flexGrow = 1 }),
+		ui.select({ options = Theme.Array.Accents, index = accentIndex, onChange = onChangeFunc }),
+		ui.box({ width = 32, height = 32, radius = 8, fill = accentColorHex, border = "outline", borderWidth = 1 }),
+	})
 end
-
-local function getTheme()
-  local saveDir = noctalia.pluginDataDir()
-  local savePath = saveDir.."/data.json"
-
-  local rawFile, err = noctalia.readFile(savePath)
-
-  if not rawFile then
-    noctalia.notifyError("Failed to retreive theme settings", err)
-    return
-  end
-
-  -- noctalia.notify("Save json:", rawFile)
-  local saveTable, err = noctalia.json.decode(rawFile)
-
-  if not saveTable then
-    noctalia.notifyError("Failed to retreive theme settings", err)
-    return
-  end
-
-  return saveTable
-end
-
-
-local function resetColorScheme(index: number, text: string)
-  selection.theme.index = index
-  selection.theme.name = text
-  
-  themeArray.themeBases = {}
-  
-  for colorSchemeBaseName, colorSchemeVariant in colorSchemes[selection.theme.name] do
-    if colorSchemeBaseName == "Light" then 
-      continue
-    end
-    
-    table.insert(themeArray.themeBases, colorSchemeBaseName)
-  end
-
-  selection.themeBase.index = 0
-  selection.themeBase.name = themeArray.themeBases[selection.themeBase.index+1]
-
-  themeArray.accents = {}
-  for colorSchemeAccentName, colorSchemeAccent in colorSchemes[selection.theme.name][selection.themeBase.name].Accents do
-      table.insert(themeArray.accents, colorSchemeAccentName)
-  end
-
-  for k, v in selection.accents do
-    selection.accents[k].index = 0
-    selection.accents[k].name = themeArray.accents[selection.accents[k].index+1]
-  end
-end
-
 
 local function render()
-  -- The panel surface already insets its content (Style::panelPadding), so this
-  -- adds gaps between rows, not its own outer padding.
+	-- The panel surface already insets its content (Style::panelPadding), so this
+	-- adds gaps between rows, not its own outer padding.
 
-  if selection.theme.name == "" then
-    local saveTable = getTheme()
-    if saveTable then
-      selection = saveTable
-    else
-      resetColorScheme(0, "Catppuccin")
-    end
+	if Theme.Selection.Theme.Name == "" then
+		local saveTable = Theme.Get()
+		if saveTable then
+			Theme.Selection = saveTable
+		else
+			Theme.Reset(0, "Catppuccin")
+		end
 
-    themeArray.themeBases = {}
-    for colorSchemeBaseName, colorSchemeVariant in colorSchemes[selection.theme.name] do
-      if colorSchemeBaseName == "Light" then 
-        continue
-      end
-    
-      table.insert(themeArray.themeBases, colorSchemeBaseName)
-    end
+		Theme.Array.ThemeBases = {}
+		for colorSchemeBaseName, colorSchemeVariant in colorSchemes[Theme.Selection.Theme.Name] do
+			if colorSchemeBaseName == "Light" then
+				continue
+			end
 
-    themeArray.accents = {}
-    for colorSchemeAccentName, colorSchemeAccent in colorSchemes[selection.theme.name][selection.themeBase.name].Accents do
-      table.insert(themeArray.accents, colorSchemeAccentName)
-    end
-  end 
+			table.insert(Theme.Array.ThemeBases, colorSchemeBaseName)
+		end
 
-  panel.render(ui.column({ flexGrow = 1, gap = 16 }, {
-    -- Header: title on the left, close button pinned to the top right —
-    -- matching the built-in panels (no divider rule).
-    ui.row({ align = "center", justify = "space_between", gap = 8 }, {
-      ui.label({ text = "Color Scheme", fontSize = 16, fontWeight = "bold", color = "on_surface", flexGrow = 1 }),
-      ui.button({ glyph = "close", onClick = "onCloseClicked" }),
-    }),
-  
-      section("ColorScheme", ui.row({ gap = 12, align = "center"}, { 
-        ui.select({ options = themeArray.themeNames, selectedIndex = selection.theme.index, onChange = "onColorSchemeSelected"}), -- theme
-        ui.select({ options = themeArray.themeBases, selectedIndex = selection.themeBase.index, onChange = "onColorSchemeBaseSelected"}), -- base
-      })),
+		Theme.Array.Accents = {}
+		for colorSchemeAccentName, colorSchemeAccent in
+			colorSchemes[Theme.Selection.Theme.Name][Theme.Selection.ThemeBase.Name].Accents
+		do
+			table.insert(Theme.Array.Accents, colorSchemeAccentName)
+		end
+	end
 
-      section("Accents", ui.column({ gap = 8 }, {
-        accentPicker("Primary", "onPrimaryAccentColorSelected"),
-        accentPicker("Secondary", "onSecondaryAccentColorSelected"),
-        accentPicker("Tertiary", "onTertiaryAccentColorSelected"),
-        accentPicker("Error", "onErrorAccentColorSelected"),
-      })),
-      ui.button({ glyph = "palette", text = "Apply Color Scheme", onClick = "onApplyClicked" }),
-  }))
+	panel.render(ui.column({ flexGrow = 1, gap = 16 }, {
+		-- Header: title on the left, close button pinned to the top right —
+		-- matching the built-in panels (no divider rule).
+		ui.row({ align = "center", justify = "space_between", gap = 8 }, {
+			ui.label({ text = "Color Scheme", fontSize = 16, fontWeight = "bold", color = "on_surface", flexGrow = 1 }),
+			ui.button({ glyph = "close", onClick = "onCloseClicked" }),
+		}),
+
+		section(
+			"ColorScheme",
+			ui.row({ gap = 12, align = "center" }, {
+				ui.select({
+					options = Theme.Array.ThemeNames,
+					selectedIndex = Theme.Selection.Theme.Index,
+					onChange = "onColorSchemeSelected",
+				}), -- theme
+				ui.select({
+					options = Theme.Array.ThemeBases,
+					selectedIndex = Theme.Selection.ThemeBase.Index,
+					onChange = "onColorSchemeBaseSelected",
+				}), -- base
+			})
+		),
+
+		section(
+			"Accents",
+			ui.column({ gap = 8 }, {
+				accentPicker("Primary", "onPrimaryAccentColorSelected"),
+				accentPicker("Secondary", "onSecondaryAccentColorSelected"),
+				accentPicker("Tertiary", "onTertiaryAccentColorSelected"),
+				accentPicker("Error", "onErrorAccentColorSelected"),
+			})
+		),
+		ui.button({ glyph = "palette", text = "Apply Color Scheme", onClick = "onApplyClicked" }),
+	}))
 end
 
 function onOpen(_context)
-  render()
+	render()
 end
 
 function onColorSchemeSelected(index, text)
-  resetColorScheme(index, text)
+	Theme.Reset(index, text)
 
-  render()
+	render()
 end
 
 function onColorSchemeBaseSelected(index, text)
-  selection.themeBase.index = index
-  selection.themeBase.name = text
+	Theme.Selection.ThemeBase.Index = index
+	Theme.Selection.ThemeBase.Name = text
 
-  themeArray.accents = {}
-  for colorSchemeAccentName, colorSchemeAccent in colorSchemes[selection.theme.name][selection.themeBase.name].Accents do
-      table.insert(themeArray.accents, colorSchemeAccentName)
-  end
+	Theme.Array.Accents = {}
+	for colorSchemeAccentName, colorSchemeAccent in
+		colorSchemes[Theme.Selection.Theme.Name][Theme.Selection.ThemeBase.name].Accents
+	do
+		table.insert(Theme.Array.Accents, colorSchemeAccentName)
+	end
 
-  render()
+	render()
 end
 
 function onPrimaryAccentColorSelected(index, text)
-  selection.accents.Primary.name = text
-  selection.accents.Primary.index = index
+	Theme.Selection.Accents.Primary.Name = text
+	Theme.Selection.Accents.Primary.Index = index
 
-  render()
+	render()
 end
 
 function onSecondaryAccentColorSelected(index, text)
-  selection.accents.Secondary.name = text
-  selection.accents.Secondary.index = index
+	Theme.Selection.Accents.Secondary.Name = text
+	Theme.Selection.Accents.Secondary.Index = index
 
-  render()
+	render()
 end
 
 function onTertiaryAccentColorSelected(index, text)
-  selection.accents.Tertiary.name = text
-  selection.accents.Tertiary.index = index
+	Theme.Selection.Accents.Tertiary.Name = text
+	Theme.Selection.Accents.Tertiary.Index = index
 
-  render()
+	render()
 end
 
 function onErrorAccentColorSelected(index, text)
-  selection.accents.Error.name = text
-  selection.accents.Error.index = index
+	Theme.Selection.Accents.Error.Name = text
+	Theme.Selection.Accents.Error.Index = index
 
-  render()
+	render()
 end
 
 function onApplyClicked()
-  local themeDir = "~/.config/noctalia/palettes"
-  local success, err = noctalia.mkdirAll(themeDir)
-  if not success then
-    noctalia.notifyError("Failed to create theme dir", err)
-  end
+	local themeDir = "~/.config/noctalia/palettes"
+	local success, err = noctalia.mkdirAll(themeDir)
+	if not success then
+		noctalia.notifyError("Failed to create theme dir", err)
+	end
 
-  local path = themeDir.."/custom.json"
+	local path = themeDir .. "/custom.json"
 
-  local saveDir = noctalia.pluginDataDir()
-  local savePath = saveDir.."/data.json"
+	local saveDir = noctalia.pluginDataDir()
+	local savePath = saveDir .. "/data.json"
 
+	local saveJson, err = noctalia.json.encode(Theme.Selection, true)
+	if not saveJson then
+		noctalia.notifyError("Failed to save theme settings", err)
 
-  local saveJson, err = noctalia.json.encode(selection, true)
-  if not saveJson then
-    noctalia.notifyError("Failed to save theme settings", err)
+		return
+	end
 
-    return
-  end
+	noctalia.writeFile(savePath, saveJson)
 
-  noctalia.writeFile(savePath, saveJson)
+	local themeJson, err = noctalia.json.encode(Theme.MakeFile(), true)
+	if not themeJson then
+		noctalia.notifyError("Failed to change theme", err)
 
-  local themeJson, err = noctalia.json.encode(makeThemeFile(), true)
-  if not themeJson then
-    noctalia.notifyError("Failed to change theme", err)
+		return
+	end
 
-    return
-  end
+	-- noctalia.notify("Theme json:", themeJson)
+	noctalia.writeFile(path, themeJson)
 
-  -- noctalia.notify("Theme json:", themeJson)
-  noctalia.writeFile(path, themeJson)
-    
-  noctalia.runAsync("noctalia msg color-scheme-set custom custom")
+	noctalia.runAsync("noctalia msg color-scheme-set custom custom")
 end
 
 function onCloseClicked()
-  panel.close()
+	panel.close()
 end
 
 function update()
-  render()
+	render()
 end
