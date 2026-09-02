@@ -4,16 +4,16 @@
 local glyph = noctalia.getConfig("glyph")
 
 local function render()
-  barWidget.setGlyph(glyph)
-  -- barWidget.setTooltip(noctalia.tr("title"))
+	barWidget.setGlyph(glyph)
+	-- barWidget.setTooltip(noctalia.tr("title"))
 end
 
 function update()
-  render()
+	render()
 end
 
 function onClick()
-  noctalia.togglePanel("uozzoku/colorscheme_variants:panel")
+	noctalia.togglePanel("uozzoku/colorscheme_variants:panel")
 end
 
 render()

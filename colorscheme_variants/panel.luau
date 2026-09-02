@@ -27,9 +27,11 @@
 --     text buffer afterward, so re-rendering never clobbers what the user typed.
 --     Observe edits via onChange (live) / onSubmit (Enter).
 
-local colorSchemes = require("./modules/colorSchemes")
+local colorSchemes = require("./modules/colorSchemes.luau")
 
-local Theme = require("./modules/themeFunctions")
+local Theme = require("./modules/themeFunctions.luau")
+
+local themeSelection = Theme.NewSelection(0, "Catppuccin")
 
 -- -- A labelled section: a heading above a control. ui.column stretches children to
 -- -- the panel width by default, so the control fills the row.
@@ -40,20 +42,16 @@ local function section(title, control)
 	})
 end
 
-for colorSchemeName, colorScheme in colorSchemes do
-	table.insert(Theme.Array.ThemeNames, colorSchemeName)
-end
-
 local function accentPicker(accentType: string, onChangeFunc: string)
-	local accentColorName = Theme.Selection.Accents[accentType].Name
-	local accentIndex = Theme.Selection.Accents[accentType].Index
+	local accentColorName = themeSelection.accents[accentType].name
+	local accentIndex = themeSelection.accents[accentType].index
 
 	local accentColorHex =
-		colorSchemes[Theme.Selection.Theme.Name][Theme.Selection.ThemeBase.Name].Accents[accentColorName]
+		colorSchemes[themeSelection.theme.name][themeSelection.themeBase.name].Accents[accentColorName]
 
 	return ui.row({ gap = 12, align = "center" }, {
 		ui.label({ text = `{accentType}:`, color = "on_surface", flexGrow = 1 }),
-		ui.select({ options = Theme.Array.Accents, index = accentIndex, onChange = onChangeFunc }),
+		ui.select({ options = Theme.Array(themeSelection).accents, index = accentIndex, onChange = onChangeFunc }),
 		ui.box({ width = 32, height = 32, radius = 8, fill = accentColorHex, border = "outline", borderWidth = 1 }),
 	})
 end
@@ -62,31 +60,14 @@ local function render()
 	-- The panel surface already insets its content (Style::panelPadding), so this
 	-- adds gaps between rows, not its own outer padding.
 
-	if Theme.Selection.Theme.Name == "" then
+	if themeSelection.theme.name == "" then
 		local saveTable = Theme.Get()
 		if saveTable then
-			Theme.Selection = saveTable
-		else
-			Theme.Reset(0, "Catppuccin")
-		end
-
-		Theme.Array.ThemeBases = {}
-		for colorSchemeBaseName, colorSchemeVariant in colorSchemes[Theme.Selection.Theme.Name] do
-			if colorSchemeBaseName == "Light" then
-				continue
-			end
-
-			table.insert(Theme.Array.ThemeBases, colorSchemeBaseName)
-		end
-
-		Theme.Array.Accents = {}
-		for colorSchemeAccentName, colorSchemeAccent in
-			colorSchemes[Theme.Selection.Theme.Name][Theme.Selection.ThemeBase.Name].Accents
-		do
-			table.insert(Theme.Array.Accents, colorSchemeAccentName)
+			themeSelection = saveTable
 		end
 	end
 
+	local themeArray = Theme.Array(themeSelection)
 	panel.render(ui.column({ flexGrow = 1, gap = 16 }, {
 		-- Header: title on the left, close button pinned to the top right —
 		-- matching the built-in panels (no divider rule).
@@ -99,13 +80,13 @@ local function render()
 			"ColorScheme",
 			ui.row({ gap = 12, align = "center" }, {
 				ui.select({
-					options = Theme.Array.ThemeNames,
-					selectedIndex = Theme.Selection.Theme.Index,
+					options = Theme.ThemeNames,
+					selectedIndex = themeSelection.theme.index,
 					onChange = "onColorSchemeSelected",
 				}), -- theme
 				ui.select({
-					options = Theme.Array.ThemeBases,
-					selectedIndex = Theme.Selection.ThemeBase.Index,
+					options = themeArray.bases,
+					selectedIndex = themeSelection.themeBase.index,
 					onChange = "onColorSchemeBaseSelected",
 				}), -- base
 			})
@@ -129,85 +110,48 @@ function onOpen(_context)
 end
 
 function onColorSchemeSelected(index, text)
-	Theme.Reset(index, text)
+	themeSelection = Theme.NewSelection(index, text)
 
 	render()
 end
 
 function onColorSchemeBaseSelected(index, text)
-	Theme.Selection.ThemeBase.Index = index
-	Theme.Selection.ThemeBase.Name = text
-
-	Theme.Array.Accents = {}
-	for colorSchemeAccentName, colorSchemeAccent in
-		colorSchemes[Theme.Selection.Theme.Name][Theme.Selection.ThemeBase.name].Accents
-	do
-		table.insert(Theme.Array.Accents, colorSchemeAccentName)
-	end
+	themeSelection.themeBase.index = index
+	themeSelection.themeBase.name = text
 
 	render()
 end
 
 function onPrimaryAccentColorSelected(index, text)
-	Theme.Selection.Accents.Primary.Name = text
-	Theme.Selection.Accents.Primary.Index = index
+	themeSelection.accents.Primary.name = text
+	themeSelection.accents.Primary.index = index
 
 	render()
 end
 
 function onSecondaryAccentColorSelected(index, text)
-	Theme.Selection.Accents.Secondary.Name = text
-	Theme.Selection.Accents.Secondary.Index = index
+	themeSelection.accents.Secondary.name = text
+	themeSelection.accents.Secondary.index = index
 
 	render()
 end
 
 function onTertiaryAccentColorSelected(index, text)
-	Theme.Selection.Accents.Tertiary.Name = text
-	Theme.Selection.Accents.Tertiary.Index = index
+	themeSelection.accents.Tertiary.name = text
+	themeSelection.accents.Tertiary.index = index
 
 	render()
 end
 
 function onErrorAccentColorSelected(index, text)
-	Theme.Selection.Accents.Error.Name = text
-	Theme.Selection.Accents.Error.Index = index
+	themeSelection.accents.Error.name = text
+	themeSelection.accents.Error.index = index
 
 	render()
 end
 
 function onApplyClicked()
-	local themeDir = "~/.config/noctalia/palettes"
-	local success, err = noctalia.mkdirAll(themeDir)
-	if not success then
-		noctalia.notifyError("Failed to create theme dir", err)
-	end
-
-	local path = themeDir .. "/custom.json"
-
-	local saveDir = noctalia.pluginDataDir()
-	local savePath = saveDir .. "/data.json"
-
-	local saveJson, err = noctalia.json.encode(Theme.Selection, true)
-	if not saveJson then
-		noctalia.notifyError("Failed to save theme settings", err)
-
-		return
-	end
-
-	noctalia.writeFile(savePath, saveJson)
-
-	local themeJson, err = noctalia.json.encode(Theme.MakeFile(), true)
-	if not themeJson then
-		noctalia.notifyError("Failed to change theme", err)
-
-		return
-	end
-
-	-- noctalia.notify("Theme json:", themeJson)
-	noctalia.writeFile(path, themeJson)
-
-	noctalia.runAsync("noctalia msg color-scheme-set custom custom")
+	Theme.Apply(themeSelection)
 end
 
 function onCloseClicked()

@@ -1,6 +1,20 @@
-local colorSchemes = require("./colorSchemes")
+export type themeSelection = {
+	theme: { name: string, index: number },
+	themeBase: { name: string, index: number },
+	accents: {
+		["Primary"]: { name: string, index: number },
+		["Secondary"]: { name: string, index: number },
+		["Tertiary"]: { name: string, index: number },
+		["Error"]: { name: string, index: number },
+	},
+}
+
+local colorSchemes = require("./colorSchemes.luau")
 
 local Theme = {}
+
+Theme.ThemeNames = {}
+Theme.Dir = "~/.config/noctalia/palettes"
 
 Theme.JSON = {
 	["dark"] = {
@@ -97,31 +111,14 @@ Theme.JSON = {
 	},
 }
 
-Theme.Selection = {
-	Theme = { Name = "", Index = 0 },
-	ThemeBase = { Name = "", Index = 0 },
-	Accents = {
-		["Primary"] = { Name = "", Index = 0 },
-		["Secondary"] = { Name = "", Index = 0 },
-		["Tertiary"] = { Name = "", Index = 0 },
-		["Error"] = { Name = "", Index = 0 },
-	},
-}
-
-Theme.Array = {
-	ThemeNames = {},
-	ThemeBases = {},
-	Accents = {},
-}
-
-function Theme.MakeFile()
+function Theme.MakeFile(themeSelection: themeSelection)
 	local themeFile = Theme.JSON
 
-	local themeName = Theme.Selection.Theme.Name
-	local themeBase = Theme.Selection.ThemeBase.Name
+	local themeName = themeSelection.theme.name
+	local themeBase = themeSelection.themeBase.name
 
 	local baseColors = colorSchemes[themeName][themeBase].Base
-	local lightBaseColors = colorSchemes[themeBase].Light.Base
+	local lightBaseColors = colorSchemes[themeName].Light.Base
 
 	local accentColorsList = colorSchemes[themeName][themeBase].Accents
 	local lightAccentsColorsList = colorSchemes[themeName].Light.Accents
@@ -144,13 +141,13 @@ function Theme.MakeFile()
 		themeFile.light.terminal[k] = v
 	end
 
-	for k, v in Theme.Selection.accents do
-		local color = accentColorsList[Theme.Selection.accents[k].name]
+	for k, v in themeSelection.accents do
+		local color = accentColorsList[themeSelection.accents[k].name]
 		themeFile.dark[`m{k}`] = color
 	end
 
-	for k, v in Theme.Selection.accents do
-		local color = lightAccentsColorsList[Theme.Selection.accents[k].name]
+	for k, v in themeSelection.accents do
+		local color = lightAccentsColorsList[themeSelection.accents[k].name]
 		themeFile.light[`m{k}`] = color
 	end
 
@@ -182,34 +179,92 @@ function Theme.Get()
 	return saveTable
 end
 
-function Theme.Reset(index: number, themeName: string)
-	Theme.Selection.Theme.Index = index
-	Theme.Selection.Theme.Name = themeName
+function Theme.Array(themeSelection: themeSelection)
+	local array = {}
 
-	Theme.Array.ThemeBases = {}
-
-	for colorSchemeBaseName, colorSchemeVariant in colorSchemes[themeName] do
+	array.bases = {}
+	for colorSchemeBaseName: string, colorSchemeVariant in colorSchemes[themeSelection.theme.name] do
 		if colorSchemeBaseName == "Light" then
 			continue
 		end
 
-		table.insert(Theme.Array.ThemeBases, colorSchemeBaseName)
+		table.insert(array.bases, colorSchemeBaseName)
 	end
 
-	Theme.Selection.ThemeBase.Index = 0
-	local themeBaseName = Theme.Array.ThemeBases[1]
-
-	Theme.Selection.ThemeBase.Name = themeBaseName
-
-	Theme.Array.Accents = {}
-	for colorSchemeAccentName, colorSchemeAccent in colorSchemes[themeName][themeBaseName].Accents do
-		table.insert(Theme.Array.Accents, colorSchemeAccentName)
+	if themeSelection.themeBase.name == "" then
+		return array
 	end
 
-	for k, v in Theme.Selection.accents do
-		Theme.Selection.accents[k].Index = 0
-		Theme.Selection.accents[k].name = Theme.Array.Accents[1]
+	array.accents = {}
+	for colorSchemeAccentName: string, colorSchemeAccent: string in
+		colorSchemes[themeSelection.theme.name][themeSelection.themeBase.name].Accents
+	do
+		table.insert(array.accents, colorSchemeAccentName)
 	end
+
+	return array
+end
+
+function Theme.NewSelection(index: number, themeName: string): themeSelection
+	local themeSelection: themeSelection = {
+		theme = { name = themeName, index = index },
+		themeBase = { name = "", index = 0 },
+		accents = {
+			["Primary"] = { name = "", index = 0 },
+			["Secondary"] = { name = "", index = 0 },
+			["Tertiary"] = { name = "", index = 0 },
+			["Error"] = { name = "", index = 0 },
+		},
+	}
+
+	themeSelection.themeBase.index = 0
+	local themeBaseName = Theme.Array(themeSelection).bases[1]
+
+	themeSelection.themeBase.name = themeBaseName
+
+	for k, v in themeSelection.accents do
+		themeSelection.accents[k].Index = 0
+		themeSelection.accents[k].name = Theme.Array(themeSelection).accents[1]
+	end
+
+	return themeSelection
+end
+
+function Theme.Apply(themeSelection)
+	local success, err = noctalia.mkdirAll(Theme.Dir)
+	if not success then
+		noctalia.notifyError("Failed to create theme dir", err)
+	end
+
+	local path = Theme.Dir .. "/custom.json"
+
+	local saveDir = noctalia.pluginDataDir()
+	local savePath = saveDir .. "/data.json"
+
+	local saveJson, err = noctalia.json.encode(themeSelection, true)
+	if not saveJson then
+		noctalia.notifyError("Failed to save theme settings", err)
+
+		return
+	end
+
+	noctalia.writeFile(savePath, saveJson)
+
+	local themeJson, err = noctalia.json.encode(Theme.MakeFile(themeSelection), true)
+	if not themeJson then
+		noctalia.notifyError("Failed to change theme", err)
+
+		return
+	end
+
+	-- noctalia.notify("Theme json:", themeJson)
+	noctalia.writeFile(path, themeJson)
+
+	noctalia.runAsync("noctalia msg color-scheme-set custom custom")
+end
+
+for colorSchemeName, colorScheme in colorSchemes do
+	table.insert(Theme.ThemeNames, colorSchemeName)
 end
 
 return Theme
