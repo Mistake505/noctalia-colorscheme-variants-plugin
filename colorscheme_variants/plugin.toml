@@ -12,7 +12,7 @@ description  = "Colorscheme Variants"
 id = "panel"
 entry = "panel.luau"
 width = 500
-height = 415
+height = 460
 placement = "attached"
 position = "auto"
 

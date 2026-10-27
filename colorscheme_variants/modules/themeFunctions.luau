@@ -9,6 +9,16 @@ export type themeSelection = {
 	},
 }
 
+local function length(t: { [any]: any })
+	local n = 0
+
+	for _ in t do
+		n += 1
+	end
+
+	return n
+end
+
 local colorSchemes = require("./colorSchemes.luau")
 
 local Theme = {}
@@ -205,7 +215,7 @@ function Theme.Array(themeSelection: themeSelection)
 	return array
 end
 
-function Theme.NewSelection(index: number, themeName: string): themeSelection
+function Theme.RandomSelection(index: number, themeName: string): themeSelection
 	local themeSelection: themeSelection = {
 		theme = { name = themeName, index = index },
 		themeBase = { name = "", index = 0 },
@@ -217,14 +227,15 @@ function Theme.NewSelection(index: number, themeName: string): themeSelection
 		},
 	}
 
-	themeSelection.themeBase.index = 0
-	local themeBaseName = Theme.Array(themeSelection).bases[1]
-
+	local themeBaseIndex = math.random(1, #Theme.Array(themeSelection).bases)
+	themeSelection.themeBase.index = themeBaseIndex - 1
+	local themeBaseName = Theme.Array(themeSelection).bases[themeBaseIndex]
 	themeSelection.themeBase.name = themeBaseName
 
-	for k, v in themeSelection.accents do
-		themeSelection.accents[k].Index = 0
-		themeSelection.accents[k].name = Theme.Array(themeSelection).accents[1]
+	for accentType in themeSelection.accents do
+		local accentIndex = math.random(1, #Theme.Array(themeSelection).accents)
+		themeSelection.accents[accentType].Index = accentIndex - 1
+		themeSelection.accents[accentType].name = Theme.Array(themeSelection).accents[accentIndex]
 	end
 
 	return themeSelection
@@ -261,6 +272,21 @@ function Theme.Apply(themeSelection)
 	noctalia.writeFile(path, themeJson)
 
 	noctalia.runAsync("noctalia msg color-scheme-set custom custom")
+end
+
+function Theme.AccentTable(themeSelection: themeSelection)
+	local t = {}
+
+	for k, v in themeSelection.accents do
+		local themeName = themeSelection.theme.name
+		local themeBaseName = themeSelection.themeBase.name
+
+		local accentHex = colorSchemes[themeName][themeBaseName].Accents[v.name]
+
+		t[k] = accentHex
+	end
+
+	return t
 end
 
 for colorSchemeName, colorScheme in colorSchemes do

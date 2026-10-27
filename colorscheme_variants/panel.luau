@@ -31,7 +31,7 @@ local colorSchemes = require("./modules/colorSchemes.luau")
 
 local Theme = require("./modules/themeFunctions.luau")
 
-local themeSelection = Theme.NewSelection(0, "Catppuccin")
+local themeSelection = Theme.RandomSelection(0, "Catppuccin")
 
 -- -- A labelled section: a heading above a control. ui.column stretches children to
 -- -- the panel width by default, so the control fills the row.
@@ -43,16 +43,16 @@ local function section(title, control)
 end
 
 local function accentPicker(accentType: string, onChangeFunc: string)
-	local accentColorName = themeSelection.accents[accentType].name
 	local accentIndex = themeSelection.accents[accentType].index
-
-	local accentColorHex =
-		colorSchemes[themeSelection.theme.name][themeSelection.themeBase.name].Accents[accentColorName]
 
 	return ui.row({ gap = 12, align = "center" }, {
 		ui.label({ text = `{accentType}:`, color = "on_surface", flexGrow = 1 }),
-		ui.select({ options = Theme.Array(themeSelection).accents, index = accentIndex, onChange = onChangeFunc }),
-		ui.box({ width = 32, height = 32, radius = 8, fill = accentColorHex, border = "outline", borderWidth = 1 }),
+		ui.select({
+			options = Theme.Array(themeSelection).accents,
+			selectedIndex = accentIndex,
+			onChange = onChangeFunc,
+		}),
+		--ui.box({ width = 32, height = 32, radius = 8, fill = accentColorHex, border = "outline", borderWidth = 1 }),
 	})
 end
 
@@ -64,10 +64,18 @@ local function render()
 		local saveTable = Theme.Get()
 		if saveTable then
 			themeSelection = saveTable
+		else
+			themeSelection = Theme.RandomSelection(themeSelection.theme.index, themeSelection.theme.name)
 		end
 	end
 
+	local accentList = Theme.AccentTable(themeSelection)
 	local themeArray = Theme.Array(themeSelection)
+
+	local themeName = themeSelection.theme.name
+	local themeBaseName = themeSelection.themeBase.name
+	local currentTheme = colorSchemes[themeName][themeBaseName]
+
 	panel.render(ui.column({ flexGrow = 1, gap = 16 }, {
 		-- Header: title on the left, close button pinned to the top right —
 		-- matching the built-in panels (no divider rule).
@@ -101,6 +109,56 @@ local function render()
 				accentPicker("Error", "onErrorAccentColorSelected"),
 			})
 		),
+		ui.row({ gap = 12, align = "center" }, {
+			ui.box({
+				width = 32,
+				height = 32,
+				radius = 8,
+				fill = accentList.Primary,
+				border = "outline",
+				borderWidth = 1,
+			}),
+			ui.box({
+				width = 32,
+				height = 32,
+				radius = 8,
+				fill = accentList.Secondary,
+				border = "outline",
+				borderWidth = 1,
+			}),
+			ui.box({
+				width = 32,
+				height = 32,
+				radius = 8,
+				fill = accentList.Tertiary,
+				border = "outline",
+				borderWidth = 1,
+			}),
+			ui.box({
+				width = 32,
+				height = 32,
+				radius = 8,
+				fill = accentList.Error,
+				border = "outline",
+				borderWidth = 1,
+			}),
+			ui.box({
+				width = 32,
+				height = 32,
+				radius = 8,
+				fill = currentTheme.Base.mSurface,
+				border = "outline",
+				borderWidth = 1,
+			}),
+			ui.box({
+				width = 32,
+				height = 32,
+				radius = 8,
+				fill = currentTheme.Base.mSurfaceVariant,
+				border = "outline",
+				borderWidth = 1,
+			}),
+		}),
 		ui.button({ glyph = "palette", text = "Apply Color Scheme", onClick = "onApplyClicked" }),
 	}))
 end
@@ -110,42 +168,44 @@ function onOpen(_context)
 end
 
 function onColorSchemeSelected(index, text)
-	themeSelection = Theme.NewSelection(index, text)
+	themeSelection = Theme.RandomSelection(index, text)
 
 	render()
 end
 
+local function getKey(index: number?, text: string?)
+	return {
+		index = tonumber(index) or 0,
+		name = text,
+	}
+end
+
 function onColorSchemeBaseSelected(index, text)
-	themeSelection.themeBase.index = index
-	themeSelection.themeBase.name = text
+	themeSelection.themeBase = getKey(index, text)
 
 	render()
 end
 
 function onPrimaryAccentColorSelected(index, text)
-	themeSelection.accents.Primary.name = text
-	themeSelection.accents.Primary.index = index
+	themeSelection.accents.Primary = getKey(index, text)
 
 	render()
 end
 
 function onSecondaryAccentColorSelected(index, text)
-	themeSelection.accents.Secondary.name = text
-	themeSelection.accents.Secondary.index = index
+	themeSelection.accents.Secondary = getKey(index, text)
 
 	render()
 end
 
 function onTertiaryAccentColorSelected(index, text)
-	themeSelection.accents.Tertiary.name = text
-	themeSelection.accents.Tertiary.index = index
+	themeSelection.accents.Tertiary = getKey(index, text)
 
 	render()
 end
 
 function onErrorAccentColorSelected(index, text)
-	themeSelection.accents.Error.name = text
-	themeSelection.accents.Error.index = index
+	themeSelection.accents.Error = getKey(index, text)
 
 	render()
 end
